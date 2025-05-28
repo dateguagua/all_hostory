@@ -1,15 +1,18 @@
 package com.example.demo.service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.exception.InsufficientAmountException;
 import com.example.demo.repository.BookRepository;
 import com.example.demo.service.BookService;
 import com.example.demo.service.BuyService;
 
-import jakarta.transaction.Transactional;
+
 
 @Service //交易服務
 public class BuyServiceImpl implements BuyService {
@@ -21,8 +24,10 @@ public class BuyServiceImpl implements BuyService {
 	//Exception 預設不會回滾 可以透過dontRollbackOn定義
 	
 	@Transactional(
-			rollbackOn = {InsufficientAmountException.class},
-			dontRollbackOn = {RuntimeException.class}
+			propagation = Propagation.REQUIRED, // 預設
+			isolation = Isolation.DEFAULT, // 預設:使用資料庫預設
+			rollbackFor = {InsufficientAmountException.class},
+			noRollbackFor = {RuntimeException.class}
 			)
 	
 	
